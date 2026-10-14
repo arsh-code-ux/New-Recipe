@@ -1,35 +1,147 @@
-import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
 
 function Mealinfo() {
     const { mealid } = useParams();
-    const [info, setInfo] = useState()
-    console.log(mealid);
+    const [info, setInfo] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
 
-    const getInfo = async () => {
-        const get = await fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${mealid}`);
-        const data = await get.json();
-        console.log(data.meals[0]);
-        setInfo(data.meals[0]);
-    }
-     if(info != ""){
+    useEffect(() => {
+        const controller = new AbortController();
+
+        const getInfo = async () => {
+            setLoading(true);
+            setError('');
+
+            try {
+                const get = await fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${mealid}`, {
+                    signal: controller.signal,
+                });
+                const data = await get.json();
+                setInfo(data.meals?.[0] ?? null);
+
+                if (!data.meals?.[0]) {
+                    setError('Recipe not found.');
+                }
+            } catch (fetchError) {
+                if (fetchError.name !== 'AbortError') {
+                    setError('Unable to load recipe details right now.');
+                }
+            } finally {
+                setLoading(false);
+            }
+        };
+
         getInfo();
-     }
-    return (
-        <div className="mealinfoPage">
-        {
-            !info ? "Data not Found" :
-            <div className='mealinfo'>
-            <img className="infoImg" src={info.strMealThumb} alt={info.strMeal} /> 
-            <div className='info'>
-            <h1>Recipe Details</h1>
-            <button>{info.strMeal}</button>
-            <h3>Instruction's</h3>
-            <p>{info.strInstructions}</p>
-            </div>
-        </div>
 
+        return () => controller.abort();
+    }, [mealid]);
+
+    const ingredients = useMemo(() => {
+        if (!info) {
+            return [];
         }
+
+        return Array.from({ length: 20 }, (_, index) => {
+            const ingredient = info[`strIngredient${index + 1}`];
+            const measure = info[`strMeasure${index + 1}`];
+
+            if (!ingredient || ingredient.trim() === '') {
+                return null;
+            }
+
+            return `${ingredient}${measure && measure.trim() ? ` - ${measure}` : ''}`;
+        }).filter(Boolean);
+    }, [info]);
+
+    const steps = info?.strInstructions
+        ? info.strInstructions
+            .split('. ')
+            .map((step) => step.trim())
+            .filter(Boolean)
+        : [];
+
+    if (loading) {
+        return (
+            <div className="meal-detail-page">
+                <div className="detail-shell detail-shell--loading">
+                    <div className="skeleton-box detail-hero__image" />
+                    <div className="detail-copy">
+                        <div className="skeleton-line skeleton-line--short" />
+                        <div className="skeleton-line" />
+                        <div className="skeleton-line" />
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (error || !info) {
+        return (
+            <div className="meal-detail-page">
+                <div className="detail-shell detail-empty-state">
+                    <h1>Recipe unavailable</h1>
+                    <p>{error || 'This recipe could not be loaded.'}</p>
+                    <Link className="primary-link" to="/">
+                        Back to search
+                    </Link>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="meal-detail-page">
+            <Link className="back-link" to="/">Back to recipes</Link>
+            <article className="detail-shell">
+                <div className="detail-hero">
+                    <img className="detail-hero__image" src={info.strMealThumb} alt={info.strMeal} />
+                    <div className="detail-hero__content">
+                        <span className="eyebrow">{info.strArea || 'Global favorite'}</span>
+                        <h1>{info.strMeal}</h1>
+                        <p>{info.strCategory || 'Featured dish'} • {ingredients.length} ingredients</p>
+                        <div className="detail-tags">
+                            {info.strTags ? info.strTags.split(',').map((tag) => <span key={tag}>{tag}</span>) : <span>Chef approved</span>}
+                        </div>
+                    </div>
+                </div>
+
+                <div className="detail-grid">
+                    <section className="detail-card">
+                        <h2>Ingredients</h2>
+                        <ul className="ingredient-list">
+                            {ingredients.map((ingredient) => (
+                                <li key={ingredient}>{ingredient}</li>
+                            ))}
+                        </ul>
+                    </section>
+
+                    <section className="detail-card">
+                        <h2>Instructions</h2>
+                        <div className="instruction-list">
+                            {steps.map((step, index) => (
+                                <p key={`${index}-${step}`}>
+                                    <strong>Step {index + 1}.</strong> {step}
+                                </p>
+                            ))}
+                        </div>
+                    </section>
+                </div>
+
+                <div className="detail-actions">
+                    {info.strYoutube ? (
+                        <a className="primary-link" href={info.strYoutube} target="_blank" rel="noreferrer">
+                            Watch video
+                        </a>
+                    ) : null}
+                    {info.strSource ? (
+                        <a className="secondary-link" href={info.strSource} target="_blank" rel="noreferrer">
+                            Original source
+                        </a>
+                    ) : null}
+                </div>
+            </article>
         </div>
     )
 }
