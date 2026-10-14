@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Mealcards from './Mealcards';
 
-const featurePills = ['Luxury UI', 'Responsive layout', 'Section scroll', 'Favorites saved locally'];
+const featurePills = ['Handpicked dishes', 'Fast search', 'Recipe details', 'Favorites saved'];
 const quickSearches = ['chicken', 'pasta', 'dessert', 'salad', 'soup', 'vegan'];
 
 const Mainpage = () => {
@@ -133,10 +133,10 @@ const Mainpage = () => {
       <section className="landing-section landing-section--hero" id="top">
         <div className="hero-card hero-card--wide">
           <div className="hero-copy">
-            <span className="eyebrow">Premium frontend recipe experience</span>
-            <h1>Food Recipe App</h1>
+            <span className="eyebrow">Fresh flavors, smarter cooking</span>
+            <h1>Find your next favorite meal.</h1>
             <p>
-              A single-screen landing page that feels polished, fills the viewport, and lets you search, save, and inspect recipes section by section while scrolling.
+              A warm, modern recipe landing page built to guide visitors from discovery to delicious detail with one smooth scroll and a clear search flow.
             </p>
             <div className="hero-metrics">
               {heroMetrics.map((metric) => (
@@ -154,9 +154,9 @@ const Mainpage = () => {
           </div>
 
           <div className="hero-panel">
-            <div className="hero-panel__badge">Designed for full-screen scroll</div>
+            <div className="hero-panel__badge">Built for easy browsing</div>
             <p>
-              Search results below automatically feed the focus section, so the page stays useful without navigating away.
+              Use the quick searches below to explore dishes, open a recipe card, and jump directly into ingredients, steps, and saved favorites.
             </p>
             <a className="primary-link" href="#discover">
               Explore recipes
