@@ -83,7 +83,7 @@ function Mealinfo() {
                 <div className="detail-shell detail-empty-state">
                     <h1>Recipe unavailable</h1>
                     <p>{error || 'This recipe could not be loaded.'}</p>
-                    <Link className="primary-link" to="/">
+                    <Link className="primary-link" to="/recipes">
                         Back to search
                     </Link>
                 </div>
@@ -93,7 +93,7 @@ function Mealinfo() {
 
     return (
         <div className="meal-detail-page">
-            <Link className="back-link" to="/">Back to recipes</Link>
+            <Link className="back-link" to="/recipes">Back to recipes</Link>
             <article className="detail-shell">
                 <div className="detail-hero">
                     <img className="detail-hero__image" src={info.strMealThumb} alt={info.strMeal} />

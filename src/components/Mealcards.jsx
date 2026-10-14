@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const skeletonCards = Array.from({ length: 6 }, (_, index) => index);
 
@@ -7,7 +8,6 @@ const Mealcards = ({
   loading = false,
   favorites = [],
   onToggleFavorite,
-  onSelectMeal,
 }) => {
   const isSaved = (mealId) => favorites.some((meal) => meal.idMeal === mealId);
 
@@ -36,9 +36,9 @@ const Mealcards = ({
                 <p>{currentItem.strCategory || 'Signature dish'} recipe with step-by-step instructions.</p>
               </div>
               <div className="meal-card__actions">
-                <button type="button" className="primary-link" onClick={() => onSelectMeal?.(currentItem)}>
+                <Link className="primary-link" to={`/recipe/${currentItem.idMeal}`}>
                   View recipe
-                </button>
+                </Link>
                 <button
                   type="button"
                   className="secondary-button"
