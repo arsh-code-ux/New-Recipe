@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import Mealcards from './Mealcards';
 
 const featurePills = ['Handpicked dishes', 'Fast search', 'Recipe details', 'Favorites saved'];
@@ -120,7 +121,6 @@ const Mainpage = () => {
 
   const selectMeal = (meal) => {
     setSelectedMeal(meal);
-    document.getElementById('recipe-focus')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   const favoriteMeals = useMemo(
@@ -130,6 +130,10 @@ const Mainpage = () => {
 
   return (
     <main className="landing-page">
+      <div className="page-topbar">
+        <Link className="secondary-link" to="/">Dashboard</Link>
+      </div>
+
       <section className="landing-section landing-section--hero" id="top">
         <div className="hero-card hero-card--wide">
           <div className="hero-copy">
@@ -214,71 +218,6 @@ const Mainpage = () => {
           onToggleFavorite={toggleFavorite}
           onSelectMeal={selectMeal}
         />
-      </section>
-
-      <section className="landing-section landing-section--focus" id="recipe-focus">
-        <div className="section-card section-card--focus">
-          <div className="section-heading section-heading--large">
-            <div>
-              <span className="eyebrow">Focus section</span>
-              <h2>{selectedMeal ? selectedMeal.strMeal : 'Select a recipe to focus'}</h2>
-            </div>
-            <p>
-              {selectedMeal ? `${selectedMeal.strArea || 'Global'} • ${selectedMeal.strCategory || 'Signature dish'}` : 'Use the cards above to switch the detail view.'}
-            </p>
-          </div>
-
-          {selectedMeal ? (
-            <div className="focus-layout">
-              <div className="focus-media">
-                <img src={selectedMeal.strMealThumb} alt={selectedMeal.strMeal} />
-              </div>
-
-              <div className="focus-copy">
-                <div className="detail-tags detail-tags--large">
-                  {selectedMeal.strTags ? selectedMeal.strTags.split(',').map((tag) => <span key={tag}>{tag}</span>) : <span>Chef approved</span>}
-                </div>
-
-                <div className="focus-blocks">
-                  <section className="detail-card detail-card--soft">
-                    <h3>Ingredients</h3>
-                    <ul className="ingredient-list">
-                      {ingredients.map((ingredient) => (
-                        <li key={ingredient}>{ingredient}</li>
-                      ))}
-                    </ul>
-                  </section>
-
-                  <section className="detail-card detail-card--soft">
-                    <h3>Instructions</h3>
-                    <div className="instruction-list">
-                      {steps.map((step, index) => (
-                        <p key={`${index}-${step}`}>
-                          <strong>Step {index + 1}.</strong> {step}
-                        </p>
-                      ))}
-                    </div>
-                  </section>
-                </div>
-
-                <div className="detail-actions">
-                  <button type="button" className="secondary-button" onClick={() => toggleFavorite(selectedMeal)}>
-                    {favorites.some((item) => item.idMeal === selectedMeal.idMeal) ? 'Saved to favorites' : 'Save to favorites'}
-                  </button>
-                  {selectedMeal.strYoutube ? (
-                    <a className="primary-link" href={selectedMeal.strYoutube} target="_blank" rel="noreferrer">
-                      Watch video
-                    </a>
-                  ) : null}
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="detail-empty-state detail-empty-state--inline">
-              <p>No recipe selected yet. Pick one from the search results above.</p>
-            </div>
-          )}
-        </div>
       </section>
 
       <section className="landing-section landing-section--favorites">

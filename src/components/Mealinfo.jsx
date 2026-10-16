@@ -93,31 +93,42 @@ function Mealinfo() {
 
     return (
         <div className="meal-detail-page">
-            <Link className="back-link" to="/recipes">Back to recipes</Link>
             <article className="detail-shell">
                 <div className="detail-hero">
-                    <img className="detail-hero__image" src={info.strMealThumb} alt={info.strMeal} />
-                    <div className="detail-hero__content">
-                        <span className="eyebrow">{info.strArea || 'Global favorite'}</span>
+                    <div className="detail-media-wrap">
+                        <img className="detail-hero__image" src={info.strMealThumb} alt={info.strMeal} />
+                    </div>
+
+                    <div className="detail-header">
+                        <span className="detail-kicker">{info.strArea || 'Global favorite'}</span>
                         <h1>{info.strMeal}</h1>
-                        <p>{info.strCategory || 'Featured dish'} • {ingredients.length} ingredients</p>
+
+                        <div className="detail-submeta">
+                            <span>{info.strCategory || 'Featured dish'}</span>
+                            <span>•</span>
+                            <span>{ingredients.length} ingredients</span>
+                        </div>
+
                         <div className="detail-tags">
                             {info.strTags ? info.strTags.split(',').map((tag) => <span key={tag}>{tag}</span>) : <span>Chef approved</span>}
                         </div>
                     </div>
                 </div>
 
-                <div className="detail-grid">
+                <div className="recipe-content-grid">
                     <section className="detail-card">
                         <h2>Ingredients</h2>
-                        <ul className="ingredient-list">
+                        <div className="ingredient-list">
                             {ingredients.map((ingredient) => (
-                                <li key={ingredient}>{ingredient}</li>
+                                <div key={ingredient} className="ingredient-item">
+                                    <span className="ingredient-dot" aria-hidden="true" />
+                                    <span>{ingredient}</span>
+                                </div>
                             ))}
-                        </ul>
+                        </div>
                     </section>
 
-                    <section className="detail-card">
+                    <section className="detail-card detail-card--instructions">
                         <h2>Instructions</h2>
                         <div className="instruction-list">
                             {steps.map((step, index) => (
